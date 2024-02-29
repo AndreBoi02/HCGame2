@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PanelManager : MonoBehaviour
 {
-    public GameObject[] panels;
-    GameObject currentPanel;
+    [SerializeField] private GameObject[] panels;
+    private GameObject currentPanel;
 
     public void EnablePanel(int index)
     {

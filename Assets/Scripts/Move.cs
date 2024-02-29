@@ -4,29 +4,46 @@ using UnityEngine;
 
 public class Move : MonoBehaviour
 {
+    [SerializeField] private Boxes boxes;
     [SerializeField] private float speed;
-    [SerializeField] private float count;
-    [SerializeField] private float counter;
-    [SerializeField] private float dir;
-    void Update()
-    {
-        count += Time.deltaTime;
-        if (count >= counter)
-        {
-            dir *= -1;
-            count = 0;
-        }
+    private Vector2 dir;
+    public bool destinyReach = false;
+    private int targetBox;
 
-        Move2(dir);
+    private void Start()
+    {
+        boxes = FindObjectOfType<Boxes>();
     }
 
-    void Move2(float mult)
+    private void Update()
     {
-        transform.Translate(Vector2.right * (speed * mult) * Time.deltaTime);
+        if (!destinyReach && Vector2.Distance(transform.position, boxes.boxTestList[targetBox].transform.position) > 0.1f)
+        {
+            dir = (boxes.boxTestList[targetBox].transform.position - transform.position).normalized;
+            transform.Translate(dir * speed * Time.deltaTime);
+        }
+        else
+        {
+            destinyReach = true;
+            if (targetBox == boxes.boxTestList.Count - 1) // Si el jugador ha llegado a la última casilla
+            {
+                boxes.NextLevel(); // Avanza al siguiente nivel
+            }
+        }
+    }
 
-        //else if (transform.position.x > Screen.width)
-        //{
-        //    transform.position = new Vector2(transform.position.x - speed, transform.position.y) * Time.deltaTime;
-        //}
+    public void Move2(int i)
+    {
+        destinyReach = false;
+        if (i > boxes.boxTestList.Count - 1)
+        {
+            return;
+        }
+        targetBox = i;
+    }
+
+    public void MoveToStart(Vector2 startPos)
+    {
+        transform.position = startPos; // Mueve al jugador a la posición de inicio
     }
 }
